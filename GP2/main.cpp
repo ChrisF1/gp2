@@ -2,6 +2,7 @@
 #ifdef WIN32
 //if so include the header for windows applications
 #include <Windows.h>
+#include "GameApplication.h"
 #endif
 
 #include "Win32Window.h"
