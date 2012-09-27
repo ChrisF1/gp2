@@ -29,8 +29,12 @@ private:
 
 	CWin32Window * m_pWindow;
 
+	//Create Vertex Buffer Pointer
 	ID3D10Buffer* m_pVertexBuffer;
 	ID3D10InputLayout* m_pVertexLayout;
+
+	//Create Index Buffer Pointer
+	ID3D10Buffer* m_pIndexBuffer;
 
 	ID3D10Effect* m_pEffect;
 	ID3D10EffectTechnique* m_pTechnique;
