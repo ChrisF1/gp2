@@ -111,44 +111,7 @@ bool CGameApplication::initGame()
 
 	m_pTechnique=m_pEffect->GetTechniqueByName("Render");
 
-	D3D10_BUFFER_DESC bd;
-	bd.Usage = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(Vertex) * 3;
-	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	bd.MiscFlags = 0;
-
-	Vertex vertices[] =
-	{
-		D3DXVECTOR3(0.0f, 0.5f, 0.5f),
-		D3DXVECTOR3(0.5f, -0.5f, 0.5f),
-		D3DXVECTOR3(-0.5f, -0.5f, 0.5f),
-	};
-
-	D3D10_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = vertices;
-
-	if(FAILED(m_pD3D10Device->CreateBuffer(&bd,&InitData,&m_pVertexBuffer)))
-		return false;
-
-	D3D10_BUFFER_DESC indexBufferDesc;
-	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(int) * 3;
-	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-
-	int indices[]={0,1,2};
-
-	D3D10_SUBRESOURCE_DATA IndexBufferInitData;
-	IndexBufferInitData.pSysMem = vertices;
-
-	if(FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitData,&m_pIndexBuffer)))
-		return false;
-
-	m_pD3D10Device->IASetIndexBuffer(m_pIndexBuffer,DXGI_FORMAT_R32_UINT,0);
-
-	D3D10_INPUT_ELEMENT_DESC layout[]=
+		D3D10_INPUT_ELEMENT_DESC layout[]=
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,
 		D3D10_INPUT_PER_VERTEX_DATA, 0 },
@@ -169,9 +132,48 @@ bool CGameApplication::initGame()
 
 	m_pD3D10Device->IASetInputLayout( m_pVertexLayout );
 
+	//Create Vertex Buffer
+	D3D10_BUFFER_DESC bd;
+	bd.Usage = D3D10_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(Vertex) * 3;
+	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+
+	Vertex vertices[] =
+	{
+		D3DXVECTOR3(0.0f, 0.5f, 0.5f),
+		D3DXVECTOR3(0.5f, -0.5f, 0.5f),
+		D3DXVECTOR3(-0.5f, -0.5f, 0.5f),
+	};
+
+	D3D10_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;
+
+	if(FAILED(m_pD3D10Device->CreateBuffer(&bd,&InitData,&m_pVertexBuffer)))
+		return false;
+
 	UINT stride = sizeof( Vertex );
 	UINT offset = 0;
 	m_pD3D10Device->IASetVertexBuffers(0,1,&m_pVertexBuffer,&stride,&offset);
+
+	//Create Index Buffer
+	D3D10_BUFFER_DESC indexBufferDesc;
+	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(int) * 3;
+	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+
+	int indices[]= {0,1,2};
+
+	D3D10_SUBRESOURCE_DATA IndexBufferInitialData;
+	IndexBufferInitialData.pSysMem = vertices;
+
+	if(FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitialData,&m_pIndexBuffer)))
+		return false;
+
+	m_pD3D10Device->IASetIndexBuffer(m_pIndexBuffer,DXGI_FORMAT_R32_UINT,0);
 
 	m_pD3D10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
