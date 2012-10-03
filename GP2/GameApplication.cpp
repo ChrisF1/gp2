@@ -12,6 +12,8 @@ CGameApplication::CGameApplication(void)
 	m_pRenderTargetView=NULL;
 	m_pSwapChain=NULL;
 	m_pVertexBuffer=NULL;
+	//Pointer to Index Buffer
+	m_pIndexBuffer=NULL;
 	m_pDepthStencilView=NULL;
 	m_pDepthStencilTexture=NULL;
 }
@@ -26,6 +28,7 @@ CGameApplication::~CGameApplication(void)
 	if(m_pVertexLayout)
 		m_pVertexLayout->Release();
 
+	//Release IndexBuffer - Deconstructor
 	if(m_pIndexBuffer)
 		m_pIndexBuffer->Release();
 
@@ -74,27 +77,6 @@ void CGameApplication::run()
 			render();
 		}
 	}
-}
-
-void CGameApplication::render()
-{
-	float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f};
-	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,ClearColor);
-	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f,0);
-
-	m_pViewMatrixVariable->SetMatrix((float*)m_matView);
-
-	m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
-
-	D3D10_TECHNIQUE_DESC techDesc;
-	m_pTechnique->GetDesc( &techDesc );
-	for( UINT p=0; p < techDesc.Passes; p++ )
-	{
-		m_pTechnique->GetPassByIndex(p)->Apply(0);
-		m_pD3D10Device->Draw(3,0);
-	}
-
-	m_pSwapChain->Present(0,0);
 }
 
 void CGameApplication::update()
@@ -164,6 +146,8 @@ bool CGameApplication::initGame()
 	if (FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitData,&m_pIndexBuffer)))
 		return false;
 
+	m_pD3D10Device->IASetIndexBuffer(m_pIndexBuffer,DXGI_FORMAT_R32_UINT,0);
+
 	D3D10_INPUT_ELEMENT_DESC layout[]=
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,0,0,
@@ -213,6 +197,29 @@ bool CGameApplication::initGame()
 	m_pWorldMatrixVariable=m_pEffect->GetVariableByName("matWorld")->AsMatrix();
 
 	return true;
+}
+
+void CGameApplication::render()
+{
+	float ClearColor[4] = {0.0f, 0.125f, 0.3f, 1.0f};
+	m_pD3D10Device->ClearRenderTargetView(m_pRenderTargetView,ClearColor);
+	m_pD3D10Device->ClearDepthStencilView(m_pDepthStencilView, D3D10_CLEAR_DEPTH, 1.0f,0);
+
+	m_pViewMatrixVariable->SetMatrix((float*)m_matView);
+
+	m_pWorldMatrixVariable->SetMatrix((float*)m_matWorld);
+
+	D3D10_TECHNIQUE_DESC techDesc;
+	m_pTechnique->GetDesc( &techDesc );
+	for( UINT p=0; p < techDesc.Passes; p++ )
+	{
+		m_pTechnique->GetPassByIndex(p)->Apply(0);
+		//m_pD3D10Device->Draw(3,0);
+		//Draw, number of indices, start index location, offest from start to first vertex
+		m_pD3D10Device->DrawIndexed(3,0,0);
+	}
+
+	m_pSwapChain->Present(0,0);
 }
 
 bool CGameApplication::initGraphics()
