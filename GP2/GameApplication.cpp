@@ -143,7 +143,7 @@ bool CGameApplication::initGame()
 	D3D10_SUBRESOURCE_DATA IndexBufferInitData;
 	IndexBufferInitData.pSysMem = vertices;
 
-	if (FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitData,&m_pIndexBuffer)))
+	if(FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitData,&m_pIndexBuffer)))
 		return false;
 
 	m_pD3D10Device->IASetIndexBuffer(m_pIndexBuffer,DXGI_FORMAT_R32_UINT,0);
