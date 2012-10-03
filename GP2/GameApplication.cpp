@@ -26,6 +26,9 @@ CGameApplication::~CGameApplication(void)
 	if(m_pVertexLayout)
 		m_pVertexLayout->Release();
 
+	if(m_pIndexBuffer)
+		m_pIndexBuffer->Release();
+
 	if(m_pEffect)
 		m_pEffect->Release();
 
@@ -146,14 +149,20 @@ bool CGameApplication::initGame()
 	if(FAILED(m_pD3D10Device->CreateBuffer(&bd,&InitData,&m_pVertexBuffer)))
 		return false;
 
-	int indices[]={0,1,2};
-
 	D3D10_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(int) * 3;
 	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
+
+	int indices[]={0,1,2};
+
+	D3D10_SUBRESOURCE_DATA IndexBufferInitData;
+	IndexBufferInitData.pSysMem = vertices;
+
+	if (FAILED(m_pD3D10Device->CreateBuffer(&indexBufferDesc,&IndexBufferInitData,&m_pIndexBuffer)))
+		return false;
 
 	D3D10_INPUT_ELEMENT_DESC layout[]=
 	{
