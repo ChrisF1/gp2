@@ -83,8 +83,8 @@ void CGameApplication::run()
 void CGameApplication::update()
 {
 	//Rotate the square/cube.
-	m_vecRotation.y+=0.0005f;
-	m_vecRotation.x+=0.0005f;
+	m_vecRotation.y+=0.0003f;
+	m_vecRotation.x+=0.0003f;
 
 	D3DXMatrixScaling(&m_matScale,m_vecScale.x,m_vecScale.y,m_vecScale.z);
 
@@ -144,17 +144,21 @@ bool CGameApplication::initGame()
 	//Create Vertex Buffer
 	D3D10_BUFFER_DESC bd;
 	bd.Usage = D3D10_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(Vertex) * 4;
+	bd.ByteWidth = sizeof(Vertex) * 8;
 	bd.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	bd.MiscFlags = 0;
 
 	Vertex vertices[] =
 	{
-		{ D3DXVECTOR3(-0.5f, 0.5f, 0.5f), D3DXCOLOR(1.0f,0.0f,0.0f,1.0f)},
-		{ D3DXVECTOR3(0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)},
-		{ D3DXVECTOR3(-0.5f, -0.5f, 0.5f), D3DXCOLOR(1.0f,0.0f,1.0f,1.0f)},
-		{ D3DXVECTOR3(0.5f, 0.5f, 0.5f), D3DXCOLOR(1.0f,1.0f,0.0f,1.0f)},
+		{ D3DXVECTOR3(-0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Top Left
+		{ D3DXVECTOR3(0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Bottom Right
+		{ D3DXVECTOR3(-0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Bottom Left
+		{ D3DXVECTOR3(0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Top Right
+		{ D3DXVECTOR3(-0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Top Left
+		{ D3DXVECTOR3(0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Bottom Right
+		{ D3DXVECTOR3(-0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Bottom Left
+		{ D3DXVECTOR3(0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Top Right
 	};
 
 	D3D10_SUBRESOURCE_DATA InitData;
@@ -170,12 +174,17 @@ bool CGameApplication::initGame()
 	//Create Index Buffer
 	D3D10_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(int) * 6;
+	indexBufferDesc.ByteWidth = sizeof(int) * 36;
 	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 
-	int indices[]= {0,1,2,0,3,1};
+	int indices[]= {0,1,2,0,3,1, //Front
+					4,5,6,4,7,5, //Back
+					3,5,1,3,7,5, //Right
+					1,6,2,1,5,6, //Bottom
+					0,6,2,0,4,6, //Left
+					0,7,3,0,4,7}; //Top
 
 	D3D10_SUBRESOURCE_DATA IndexBufferInitialData;
 	IndexBufferInitialData.pSysMem = indices;
@@ -228,7 +237,7 @@ void CGameApplication::render()
 		m_pTechnique->GetPassByIndex(p)->Apply(0);
 		//m_pD3D10Device->Draw(3,0);
 		//Draw, number of indices, start index location, offest from start to first vertex
-		m_pD3D10Device->DrawIndexed(6,0,0);
+		m_pD3D10Device->DrawIndexed(36,0,0);
 	}
 
 	m_pSwapChain->Present(0,0);
