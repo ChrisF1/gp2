@@ -39,6 +39,9 @@ private:
 	ID3D10Effect* m_pEffect;
 	ID3D10EffectTechnique* m_pTechnique;
 
+	//Texture
+	ID3D10ShaderResourceView *m_pDiffuseTexture;
+
 	ID3D10EffectShaderResourceVariable *m_pDiffuseTextureVariable;
 	ID3D10ShaderResourceView* m_pTexcureShaderResource;
 
@@ -58,4 +61,5 @@ private:
 
 	D3DXMATRIX m_matView;
 	D3DXMATRIX m_matProjection;
+
 };

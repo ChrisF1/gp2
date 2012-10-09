@@ -4,6 +4,7 @@ struct Vertex
 {
 	D3DXVECTOR3 Pos;
 	D3DXCOLOR colour;
+	D3DXVECTOR2 texCoords;
 };
 
 CGameApplication::CGameApplication(void)
@@ -17,6 +18,8 @@ CGameApplication::CGameApplication(void)
 	m_pIndexBuffer=NULL;
 	m_pDepthStencilView=NULL;
 	m_pDepthStencilTexture=NULL;
+	//Pointer to texture
+	m_pDiffuseTexture=NULL;
 }
 
 CGameApplication::~CGameApplication(void)
@@ -35,6 +38,10 @@ CGameApplication::~CGameApplication(void)
 
 	if(m_pEffect)
 		m_pEffect->Release();
+
+	//Release the texture
+	if(m_pDiffuseTexture)
+		m_pDiffuseTexture->Release();
 
 	if(m_pRenderTargetView)
 		m_pRenderTargetView->Release();
@@ -103,7 +110,7 @@ bool CGameApplication::initGame()
 	dwShaderFlags |= D3D10_SHADER_DEBUG;
 #endif
 
-	if(FAILED(D3DX10CreateEffectFromFile(TEXT("Transform.fx"),
+	if(FAILED(D3DX10CreateEffectFromFile(TEXT("Texture.fx"),
 		NULL, NULL, "fx_4_0", dwShaderFlags, 0,
 		m_pD3D10Device, NULL, NULL, &m_pEffect,
 		NULL, NULL)))
@@ -122,6 +129,9 @@ bool CGameApplication::initGame()
 		D3D10_INPUT_PER_VERTEX_DATA, 0 },
 
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, 
+		D3D10_INPUT_PER_VERTEX_DATA, 0 },
+
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28,
 		D3D10_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
@@ -151,14 +161,14 @@ bool CGameApplication::initGame()
 
 	Vertex vertices[] =
 	{
-		{ D3DXVECTOR3(-0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Top Left
-		{ D3DXVECTOR3(0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Bottom Right
-		{ D3DXVECTOR3(-0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Bottom Left
-		{ D3DXVECTOR3(0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Front - Top Right
-		{ D3DXVECTOR3(-0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Top Left
-		{ D3DXVECTOR3(0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Bottom Right
-		{ D3DXVECTOR3(-0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Bottom Left
-		{ D3DXVECTOR3(0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f)}, //Back - Top Right
+		{ D3DXVECTOR3(-0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(0.0f,0.0f)}, //Front - Top Left
+		{ D3DXVECTOR3(0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(1.0f,1.0f)}, //Front - Bottom Right
+		{ D3DXVECTOR3(-0.5f, -0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(0.0f,1.0f)}, //Front - Bottom Left
+		{ D3DXVECTOR3(0.5f, 0.5f, 0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(1.0f,0.0f)}, //Front - Top Right
+		{ D3DXVECTOR3(-0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(0.0f,0.0f)}, //Back - Top Left
+		{ D3DXVECTOR3(0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(1.0f,1.0f)}, //Back - Bottom Right
+		{ D3DXVECTOR3(-0.5f, -0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(0.0f,1.0f)}, //Back - Bottom Left
+		{ D3DXVECTOR3(0.5f, 0.5f, -0.5f), D3DXCOLOR(0.0f,1.0f,0.0f,1.0f), D3DXVECTOR2(1.0f,0.0f)}, //Back - Top Right
 	};
 
 	D3D10_SUBRESOURCE_DATA InitData;
