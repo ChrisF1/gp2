@@ -42,8 +42,9 @@ private:
 	//Texture
 	ID3D10ShaderResourceView *m_pDiffuseTexture;
 
+	//Texture Shader Resource
 	ID3D10EffectShaderResourceVariable *m_pDiffuseTextureVariable;
-	ID3D10ShaderResourceView* m_pTexcureShaderResource;
+	ID3D10ShaderResourceView* m_pTextureShaderResource;
 
 	ID3D10EffectMatrixVariable* m_pWorldMatrixVariable;
 
