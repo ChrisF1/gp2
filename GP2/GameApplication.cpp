@@ -72,10 +72,11 @@ bool CGameApplication::initGame()
 	pTestGameObject->getTransform()->setPosition(-3.0f,0.0f,10.0f);
 	//create material
 	CMaterialComponent *pMaterial=new CMaterialComponent();
-	pMaterial->loadDiffuseTexture("armoredrecon_diff.png");
 	pMaterial->SetRenderingDevice(m_pD3D10Device);
 	pMaterial->setEffectFilename("DirectionalLight.fx");
 	pMaterial->setAmbientMaterialColour(D3DXCOLOR(0.5f,0.5f,0.5f,1.0f));
+	pMaterial->loadDiffuseTexture("armoredrecon_diff.png");
+	pMaterial->loadSpecularTexture("armoredrecon_diff.png");
 	pTestGameObject->addComponent(pMaterial);
 
 	//Create Mesh
@@ -95,10 +96,11 @@ bool CGameApplication::initGame()
 	pTestGameObject2->getTransform()->setPosition(3.0f,0.0f,10.0f);
 	//Create Material
 	CMaterialComponent *pMaterial2=new CMaterialComponent();
-	pMaterial2->loadDiffuseTexture("armoredrecon_diff.png");
 	pMaterial2->SetRenderingDevice(m_pD3D10Device);
 	pMaterial2->setEffectFilename("DirectionalLight.fx");
 	pMaterial2->setAmbientMaterialColour(D3DXCOLOR(0.5f,0.5f,0.5f,1.0f));
+	pMaterial2->loadDiffuseTexture("armoredrecon_diff.png");
+	pMaterial2->loadSpecularTexture("armoredrecon_diff.png");
 	pTestGameObject2->addComponent(pMaterial2);
 
 	//Create Mesh for the second game object

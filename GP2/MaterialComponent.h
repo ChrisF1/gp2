@@ -54,10 +54,20 @@ public:
 	};
 
 	void loadDiffuseTexture(const string& filename);
+	void loadSpecularTexture(const string& filename);
 
 	void setTextures()
 	{
+		//If this is set to true
+		if(m_pDiffuseTexture){
+			m_pUseDiffuseTextureVariable->SetBool(true);
+		}
+		if(m_pSpecularTexture){
+			m_pUseSpecularTextureVariable->SetBool(true);
+		}
+
 		m_pDiffuseTextureVariable->SetResource(m_pDiffuseTexture);
+		m_pSpecularTextureVariable->SetResource(m_pSpecularTexture);
 	};
 	//set the world matrix
 	void setWorldMatrix(float * pMatrix)
@@ -156,6 +166,7 @@ protected:
 	ID3D10EffectMatrixVariable * m_pWorldMatrixVariable;
 	//Textures
 	ID3D10EffectShaderResourceVariable *m_pDiffuseTextureVariable;
+	ID3D10EffectShaderResourceVariable *m_pSpecularTextureVariable;
 	//Light
 	ID3D10EffectVectorVariable *m_pAmbientLightColourVariable;
 	ID3D10EffectVectorVariable *m_pDiffuseLightColourVariable;
@@ -178,4 +189,8 @@ protected:
 
 	//Textures
 	ID3D10ShaderResourceView *m_pDiffuseTexture;
+	ID3D10EffectScalarVariable *m_pUseDiffuseTextureVariable;
+
+	ID3D10ShaderResourceView *m_pSpecularTexture;
+	ID3D10EffectScalarVariable *m_pUseSpecularTextureVariable;
 };
